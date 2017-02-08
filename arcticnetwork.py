@@ -1,47 +1,67 @@
 import sys
 import math
-from operator import itemgetter
 
-ADD = 0
+parent = dict()
+rank = dict()
 
-def creates_cycle(tree, edge):
-    for vertice in tree:
-        if vertice[1] == edge[1]:
-            return True
-    return False
+def make_set(vertice):
+    parent[vertice] = vertice
+    rank[vertice] = 0
 
+def find_root(vertice):
+    if parent[vertice] != vertice:
+        parent[vertice] = find_root(parent[vertice])
+    return parent[vertice]
+
+def union(v1, v2):
+    root1 = find_root(v1)
+    root2 = find_root(v2)
+    if root1 != root2:
+        if rank[root1] > rank[root2]:
+            parent[root2] = root1
+        else:
+            parent[root1] = root2
+        if rank[root1] == rank[root2]:
+            rank[root2] += 1
+            
 num_tests = int(sys.stdin.readline())
+
 while (num_tests > 0):
     S, P = map(int, sys.stdin.readline().split(' '))
     pts = []
     
     i = P
+    vertices = []
     while (i > 0):
+        vertices.append(i)
+        make_set(i)
         x, y = map(int, sys.stdin.readline().split(' '))
         pts.append((i,x,y))
         i -= 1
     
-    edges = [(b[0],a[0],round(math.hypot(b[1]-a[1], b[2]-a[2]),2))
-              for a in pts for b in pts
-              if pts.index(b) > pts.index(a)]
-    
+    #print(pts)
+    edges = [(round(math.hypot(b[1]-a[1], b[2]-a[2]),2), b[0], a[0])
+              for a in pts 
+              for b in pts[pts.index(a)+1:]]
+              
     # Kruskal's:
-    edges = sorted(edges,key=itemgetter(2))
+    edges.sort()
+    #print(edges)
+    msf = []
     
-    msf = []                # List for minimum spanning forest
-    msf.append(edges[0])    # Add the first edge to the forest
-    del edges[0]            # Remove it from the list
-    
-    # Create the msf:
     for edge in edges:
-        if len(msf)==(P-1):
+        if len(msf)==P-1:
             break
-        elif creates_cycle(msf,edge) == True:
-            continue
-        else:
+        length, v1, v2 = edge
+        if find_root(v1) != find_root(v2):
+            union(v1, v2)
             msf.append(edge)
+    
+    #print(vertices)
+    #print(edges)
+    #print(msf)
     
     # Print msf's longest edge, excluding the longest S-1 edges:
     # (This accounts for the satellite channels)
-    print(msf[P-S-1][2])
+    print("%.2f" % msf[P-S-1][0])
     num_tests -= 1
