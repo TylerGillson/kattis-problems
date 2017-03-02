@@ -2,35 +2,31 @@
 
 import sys
 
-numCds = sys.stdin.readline()
-jack = int(numCds.split(' ')[0])
-jill = int(numCds.split(' ')[1])
-
-jackList = []
-jillList = []
-
-i = 0
-while (i < jack):
-    jackList.append(int(sys.stdin.readline()))
-    i += 1
+while (True):
+    jack, jill = map(int, sys.stdin.readline().split(' '))
+    if jack==0 and jill==0:
+        break
     
-i = 0
-while (i < jill):
-    jillList.append(int(sys.stdin.readline()))
-    i += 1
+    jack_cds = [0]*1000000
+    jill_cds = [0]*1000000
     
-sell = 0
-ni = 0
-mi = 0
-
-while (ni < jack and mi < jill):
-    if jackList[ni] > jillList[mi]:
-        mi += 1
-    elif jackList[ni] < jillList[mi]:
-        ni += 1
-    else:
-        sell += 1
-        ni += 1
-        mi += 1
-
-print(sell)
+    for i in range(jack):
+        jack_cds[i] = int(sys.stdin.readline())
+    for i in range(jill):
+        jill_cds[i] = int(sys.stdin.readline())
+    
+    sell = 0
+    jack_i = 0
+    jill_i = 0
+    
+    while (jack_i < jack and jill_i < jill):
+        if jack_cds[jack_i] > jill_cds[jill_i]:
+            jill_i += 1
+        elif jack_cds[jack_i] < jill_cds[jill_i]:
+            jack_i += 1
+        else:
+            sell += 1
+            jack_i += 1
+            jill_i += 1
+            
+    print(sell)

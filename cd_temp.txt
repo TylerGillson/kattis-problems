@@ -1,0 +1,48 @@
+while (True):
+    jack, jill = map(int, sys.stdin.readline().split(' '))
+    if jack==0 and jill==0:
+        break
+    
+    jack_lo = 0
+    jack_hi = 0
+    jill_lo = 0
+    jill_hi = 0
+    
+    jack_cds = OrderedDict()
+    for i in range(jack):
+        num = int(sys.stdin.readline())
+        if i==0:
+            jack_lo = num
+        elif i==jack-1:
+            jack_hi = num
+        jack_cds[num] = 1
+    
+    jill_cds = {}
+    for i in range(jill):
+        num = int(sys.stdin.readline())
+        if i==0:
+            jill_lo = num
+        elif i==jill-1:
+            jill_hi = num
+        jill_cds[num] = 1
+    
+    if (jill_lo > jack_hi) or (jack_lo > jill_hi):
+        print(0)
+        continue
+    
+    if jack_lo==jill_lo and jack==jill:
+        print(jack)
+        continue
+    
+    sell = 0
+    if jack < jill:
+        keys = [key for key in jack_cds.keys() if key in range(jill_lo,jill_hi+1)]
+        for key in keys:
+            if jill_cds.get(key) != None:
+                sell += 1
+    else:
+        keys = [key for key in jill_cds.keys() if key in range(jack_lo,jack_hi+1)]
+        for key in keys:    
+            if jack_cds.get(key) != None:
+                sell += 1
+    print(sell)
